@@ -11,8 +11,8 @@ monitor.clear()
 monitor.setBackgroundColor(colors.black)
 monitor.setCursorPos(17, 1)
 monitor.setTextScale(2)
-monitor.setTextColor(colors.red) -------make a function to move cursor, change color, clear and write with how often it is used, to make it more efficient
-monitor.write("DragonOS")
+monitor.setTextColor(colors.red) 
+monitor.write("DragonOS") 
 monitor.setCursorPos(1, 2)
 monitor.write("-------------------------------")
 monitor.setCursorPos(18, 10)
@@ -26,7 +26,7 @@ local function recieveMessage(channelnum)
     repeat
         event, side, channel, replyChannel, message, distance = os.pullEvent()
         if event == "timer" then
-            message = "error"
+            message = "error" --this fucks with energy bar, need to fix
             print("error, message not recieved, please check computer with ID: " .. channelnum)
             return message
         end
@@ -36,32 +36,32 @@ local function recieveMessage(channelnum)
     return message
 end
 
-local function Time()
+local function Time() 
     time = recieveMessage(55)
-    monitor.setCursorPos(1,3) -------------------- all this could be rewriten with a function to make it more efficient
-    monitor.setTextColor(colors.green)
-    monitor.clearLine() 
-    monitor.write(time) -----------------------
+    monitor.setCursorPos(1,3) -------make a function to move cursor, change color, clear and write with how often it is used, to make it more efficient
+    monitor.setTextColor(colors.green) --
+    monitor.clearLine() --
+    monitor.write(time) --
     print("message recieved: " .. time)
 end
 
 local function Energy()
     energy = recieveMessage(54)
     energyMax = recieveMessage(53)
-    monitor.setCursorPos(12, 11)
-    monitor.setTextColor(colors.green)
-    monitor.clearLine()
-    monitor.write(energy .. "/" .. energyMax) ------------------------ except this one, this one is a bit more complicated because of the formatting
+    monitor.setCursorPos(12, 11) ------- function of just these 4?
+    monitor.setTextColor(colors.green) --
+    monitor.clearLine() --
+    monitor.write(energy .. "/" .. energyMax) --
     print("message recieved: " .. energy) 
     print("message recieved: " .. energyMax)- 
 end
 
-local function Percent()
-    percentage = recieveMessage(52)
-    monitor.setCursorPos(15, 12)
+local function Percent() 
+    percentage = recieveMessage(52) 
+    monitor.setCursorPos(15, 12) 
     monitor.setTextColor(colors.green)
     monitor.clearLine()
-    monitor.write(percentage)
+    monitor.write(percentage) 
     print("message recieved: " .. percentage)
 end
 
