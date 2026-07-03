@@ -1,4 +1,4 @@
--- 1.0.1
+-- 1.0.2
 local modem = peripheral.find("modem") or error("No modem found", 0)
 os.sleep(1)
 local cube = peripheral.wrap("bottom") or error("No cube found", 0)
@@ -28,9 +28,9 @@ local function EnergyPerSecond(energyC, energyCA)
     local rate = energyCA - energyC
     if rate <= 0 then
         rate = math.abs(rate)
-        return " -" .. formatEnergy(rate) .. "/s"
+        return "-" .. formatEnergy(rate) .. "/s"
     else
-        return " +" .. formatEnergy(rate) .. "/s"
+        return "+" .. formatEnergy(rate) .. "/s"
     end
 end
 
@@ -67,7 +67,7 @@ while true do
     EnergyQuantity = EnergyAmmount(energyC, energyM)
     TimeRemaining = TimeLeft(energyC, energyCA, energyM)
 
-    energy = (EnergyPerSec .. " " .. EnergyQuanity .. " " .. TimeRemaining)
+    energy = (EnergyPerSec .. " " .. EnergyQuantity .. " " .. TimeRemaining)
     modem.transmit(54, 14, energy)
     print("transmitted: " .. energy)
     

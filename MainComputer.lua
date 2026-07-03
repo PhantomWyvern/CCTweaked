@@ -1,9 +1,11 @@
--- 1.0.2
+-- 1.0.3
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "V1.0.2"
+Version = "V1.0.3"
 monitor.setTextScale(2)
+monitor.setBackgroundColor(colors.black)
+monitor.clear()
 
 --todo list
 --storage reader and display
@@ -70,8 +72,13 @@ local function energyBar() -- unknown if setup will work with this
     percentage = recieveMessage(51)
     percent = percentage / 100
     filledLength = (width * percent)
-    setup(1, height, colors.white, colors.white, "                     ")
-    setup(1, height, colors.white, colors.green, "                     ")
+    term.setCursorPos(1, height)
+    term.setBackgroundColor(colors.gray)
+    term.write(string.rep(" ", maxLength))
+
+    term.setCursorPos(1, height)
+    term.setBackgroundColor(colors.green)
+    term.write(string.rep(" ", filledLength))
     --print("message recieved: " .. percentage) --debug text
 end
 
