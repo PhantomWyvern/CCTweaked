@@ -1,8 +1,8 @@
--- 1.0.6
+-- 1.0.7
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "V1.0.6"
+Version = "V1.0.7"
 monitor.setTextScale(2)
 monitor.setBackgroundColor(colors.black)
 monitor.clear()
@@ -39,16 +39,18 @@ local function recieveMessage(channelnum)
 
     if event == "modem_message" then
         print("message recieved from ID: ".. channelnum .. " " .. message) --debug text
+        modem.close(channelnum)
+        os.cancelTimer(timerID)
+        print("Timer stopped, and modem closed on channel: " .. channelnum) --debug text
         return message
     else
         message = "error"
         print("error, message not recieved, please check sender modem ID: " .. channelnum)
+        modem.close(channelnum)
+        os.cancelTimer(timerID)
+        print("Timer stopped, and modem closed on channel: " .. channelnum) --debug text
         return message
     end
-
-    modem.close(channelnum)
-    os.cancelTimer(timerID)
-    print("Timer stopped, and modem closed on channel: " .. channelnum) --debug text
 end
 
 local function Time() 
