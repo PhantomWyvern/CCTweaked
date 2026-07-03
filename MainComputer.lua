@@ -1,8 +1,8 @@
--- 1.0.0
+-- 1.0.1
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "1.0.0"
+Version = "V1.0.1"
 monitor.setTextScale(2)
 
 --todo list
@@ -13,6 +13,7 @@ monitor.setTextScale(2)
 --day or night from clock pc
 
 local function setup(xpos, ypos, textcolor, backgroundcolor, text)
+    
     monitor.setCursorPos(xpos, ypos)
     monitor.setBackgroundColor(backgroundcolor)
     monitor.clearLine()
@@ -22,8 +23,8 @@ end
 
 -- Static text setup
 monitor.clear()
-setup(17, 1, colors.red, colors.black, "DragonOS    " .. Version)
-setup(1, 2, colors.red, colors.bllack, "-------------------------------")
+setup(17, 1, colors.red, colors.black, "DragonOS         " .. Version)
+setup(1, 2, colors.red, colors.black, "-------------------------------")
 setup(18,10, colors.green, colors.black, "Energy:") -- dt fuel display change in future
 
 local function recieveMessage(channelnum)

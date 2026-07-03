@@ -45,7 +45,7 @@ local function get_current_version()
 end
 
 local function fetch_current_version()
-    local url = "https://raw.githubusercontent.com/repos/PhantomWyvern/CCTweaked/contents/clockComputer.lua" --change filename to correct pc filepath
+    local url = "https://raw.githubusercontent.com/PhantomWyvern/CCTweaked/main/filename.lua" --change filename to correct pc filepath
     local resp, err = http.get(url)
     if fs.exists('temp2.lua') then -- changed from temp.lua
         fs.delete('temp2.lua') -- changed from temp.lua
