@@ -1,7 +1,7 @@
+-- 1.0.1 - 2026-06-03 Y-M-D
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-version = "1.0.1" -- 1st increases every official release, 2nd increases every successful added features, 3rd for tests and fixes itterations
 monitor.setTextScale(2)
 
 --todo list

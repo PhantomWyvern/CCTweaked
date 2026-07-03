@@ -19,10 +19,21 @@ end
 
 while true do
     local energyC = cube.getEnergy()
+    os.sleep(1)
+    local energyCA = cube.getEnergy()
+    rate = energyCA - energyC
+    if rate <= 0 then
+        rate = math.abs(rate)
+        rateF = formatEnergy(rate)
+        sign = " -"
+    else
+        rateF = formatEnergy(rate)
+        sign = " +"
+    end
     energyCF = formatEnergy(energyC)
     local energyM = cube.getMaxEnergy()
     energyMF = formatEnergy(energyM)
-    energy = energyCF .. "/" .. energyMF
+    energy = energyCF .. "/" .. energyMF .. sign .. "(" .. rateF .. "/s)"
     modem.transmit(54, 14, energy)
     print("transmitted: " .. energy)
     
