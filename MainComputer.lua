@@ -1,8 +1,8 @@
--- 1.0.3
+-- 1.0.5
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "V1.0.3"
+Version = "V1.0.5"
 monitor.setTextScale(2)
 monitor.setBackgroundColor(colors.black)
 monitor.clear()
@@ -31,23 +31,22 @@ setup(18,10, colors.green, colors.black, "Energy:") -- dt fuel display change in
 
 local function recieveMessage(channelnum)
     modem.open(channelnum)
-    local timerID = os.startTimer(3)
+    local timerID = os.startTimer(5)
     local event, side, channel, replyChannel, message, distance 
     repeat
         event, side, channel, replyChannel, message, distance = os.pullEvent()
-        if event == "timer" and channelnum == 51 then
-            message = "0"
-            print("error, message not recieved, please check computer with ID: " .. channelnum)
-            return message
-        elseif event == "timer" and channelnum ~= 51 then
-            message = "error"
-            print("error, message not recieved, please check computer with ID: " .. channelnum)
-            return message
-        end
-    until event == "modem_message" and channel == channelnum
+    until event == "timer" or (event == "modem_message" and channel == channelnum)
+
+    if event == "modem_message" then
+        return message
+    else
+        message = "error"
+        print("error, message not recieved, please check computer with ID: " .. channelnum)
+        return message
+    end
+
     modem.close(channelnum)
     os.cancelTimer(timerID)
-    return message
 end
 
 local function Time() 
@@ -63,22 +62,22 @@ local function Energy()
 end
 
 local function Percent() 
-    percentage = (recieveMessage(51) .. "% fulll")
+    local percentage = (recieveMessage(53) .. "% fulll")
     setup(15, 12, colors.green, colors.black, percentage)
     --print("message recieved: " .. percentage) --debug text
 end
 
 local function energyBar() -- unknown if setup will work with this
-    percentage = recieveMessage(51)
+    local percentage = tonumber(recieveMessage(52))
     percent = percentage / 100
     filledLength = (width * percent)
-    term.setCursorPos(1, height)
-    term.setBackgroundColor(colors.gray)
-    term.write(string.rep(" ", maxLength))
+    monitor.setCursorPos(1, height)
+    monitor.setBackgroundColor(colors.gray)
+    monitor.write(string.rep(" ", width))
 
-    term.setCursorPos(1, height)
-    term.setBackgroundColor(colors.green)
-    term.write(string.rep(" ", filledLength))
+    monitor.setCursorPos(1, height)
+    monitor.setBackgroundColor(colors.green)
+    monitor.write(string.rep(" ", filledLength))
     --print("message recieved: " .. percentage) --debug text
 end
 

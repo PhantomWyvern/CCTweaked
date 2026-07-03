@@ -74,9 +74,9 @@ while true do
     percentage = ((energyC / energyM) * 100)
     fpercentage = string.format("%.4f", percentage)
     percent = (fpercentage .. "% full")
-    --modem.transmit(52, 14, percent) --keeping incase test fail
+    modem.transmit(53, 14, percent) --keeping incase test fail
     --print("transmitted: " .. percent)
-    modem.transmit(51, 14, fpercentage)
+    modem.transmit(52, 14, fpercentage)
     print("transmitted: " .. fpercentage)
     os.sleep(1)
 end
