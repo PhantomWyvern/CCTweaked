@@ -1,4 +1,4 @@
--- 1.0.0
+-- 1.0.1
 local modem = peripheral.find("modem") or error("No modem found", 0)
 os.sleep(1)
 local cube = peripheral.wrap("bottom") or error("No cube found", 0)
@@ -28,9 +28,9 @@ local function EnergyPerSecond(energyC, energyCA)
     local rate = energyCA - energyC
     if rate <= 0 then
         rate = math.abs(rate)
-        return " (-" .. formatEnergy(rate) .. "/s)"
+        return " -" .. formatEnergy(rate) .. "/s"
     else
-        return " (+" .. formatEnergy(rate) .. "/s)"
+        return " +" .. formatEnergy(rate) .. "/s"
     end
 end
 
@@ -41,16 +41,17 @@ local function TimeLeft(energyC, energyCA, energyM)
     else
         if rate < 0 then
             local timeLeft = math.abs(energyC / rate)
-            return " (" .. timeLeft .. " left)"
+            timeLeft = os.date("%H:%M:%S", timeLeft)
+            return "" .. timeLeft .. " left"
         else
             local timeLeft = math.abs((energyM - energyC) / rate)
             if timeLeft > 86400 then
-                return " (Over 24h left)"
                 timeLeft = string.format("%d days, %H:%M:%S", timeLeft)
                 print("Time left: " .. timeLeft)
+                return " (>24h left)"
             else
-                timeLeft = string.format("%H:%M:%S", timeLeft)
-                return " (" .. timeLeft .. " left)"
+                timeLeft = os.date("%H:%M:%S", timeLeft)
+                return "(" .. timeLeft .. " left)"
             end
         end
     end
@@ -62,11 +63,11 @@ while true do
     energyCA = cube.getEnergy()
     energyM = cube.getMaxEnergy()
 
-    EnergyPerSecond = EnergyPerSecond(energyC, energyCA)
-    EnergyAmmount = EnergyAmmount(energyC, energyM)
-    TimeLeft = TimeLeft(energtyC, energyCA, energyM)
+    EnergyPerSec = EnergyPerSecond(energyC, energyCA)
+    EnergyQuantity = EnergyAmmount(energyC, energyM)
+    TimeRemaining = TimeLeft(energyC, energyCA, energyM)
 
-    energy = (EnergyPerSecond "     " .. EnergyAmmount .. "     " .. TimeLeft)
+    energy = (EnergyPerSec .. " " .. EnergyQuanity .. " " .. TimeRemaining)
     modem.transmit(54, 14, energy)
     print("transmitted: " .. energy)
     

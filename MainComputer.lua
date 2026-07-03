@@ -1,8 +1,8 @@
--- 1.0.1
+-- 1.0.2
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "V1.0.1"
+Version = "V1.0.2"
 monitor.setTextScale(2)
 
 --todo list
@@ -24,7 +24,7 @@ end
 -- Static text setup
 monitor.clear()
 setup(17, 1, colors.red, colors.black, "DragonOS         " .. Version)
-setup(1, 2, colors.red, colors.black, "-------------------------------")
+setup(1, 2, colors.red, colors.black, "-----------------------------------------")
 setup(18,10, colors.green, colors.black, "Energy:") -- dt fuel display change in future
 
 local function recieveMessage(channelnum)
@@ -56,7 +56,7 @@ end
 
 local function Energy()
     energy = recieveMessage(54)
-    setup(12, 11, colors.green, colors.black, energy)
+    setup(1, 11, colors.green, colors.black, energy)
     --print("message recieved: " .. energy) --debug text
 end
 
@@ -70,8 +70,8 @@ local function energyBar() -- unknown if setup will work with this
     percentage = recieveMessage(51)
     percent = percentage / 100
     filledLength = (width * percent)
-    setup(1, height, colors.white, colors.white, string.rep(" ", filledlength))
-    setup(1, height, colors.white, colors.green, string.rep(" ", filledlength))
+    setup(1, height, colors.white, colors.white, "                     ")
+    setup(1, height, colors.white, colors.green, "                     ")
     --print("message recieved: " .. percentage) --debug text
 end
 
