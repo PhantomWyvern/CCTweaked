@@ -1,4 +1,4 @@
--- 1.0.3 - 2026-06-03 Y-M-D
+-- 1.0.0
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
@@ -9,6 +9,7 @@ monitor.setTextScale(2)
 --dt fuel display switching with energy display
 --energy remaining display (or time till fulll charge if positive)
 --play sound when player joins or leaves the server?
+--day or night from clock pc
 
 local function setup(xpos, ypos, textcolor, backgroundcolor, text)
     monitor.setCursorPos(xpos, ypos)

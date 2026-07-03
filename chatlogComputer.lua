@@ -1,3 +1,4 @@
+-- 1.0.0
 local box = peripheral.wrap("left") or error("No box found", 0)
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 monitor.setTextScale(0.5)

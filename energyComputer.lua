@@ -1,3 +1,4 @@
+-- 1.0.0
 local modem = peripheral.find("modem") or error("No modem found", 0)
 os.sleep(1)
 local cube = peripheral.wrap("bottom") or error("No cube found", 0)
@@ -38,13 +39,19 @@ local function TimeLeft(energyC, energyCA, energyM)
     if rate == 0 then
         return " (INF)"
     else
-        rate = string.format("%H,%M,%S", rate)
         if rate < 0 then
             local timeLeft = math.abs(energyC / rate)
             return " (" .. timeLeft .. " left)"
         else
             local timeLeft = math.abs((energyM - energyC) / rate)
-            return " (" .. timeLeft .. " left)"
+            if timeLeft > 86400 then
+                return " (Over 24h left)"
+                timeLeft = string.format("%d days, %H:%M:%S", timeLeft)
+                print("Time left: " .. timeLeft)
+            else
+                timeLeft = string.format("%H:%M:%S", timeLeft)
+                return " (" .. timeLeft .. " left)"
+            end
         end
     end
 end

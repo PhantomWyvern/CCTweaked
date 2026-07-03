@@ -1,3 +1,4 @@
+-- 1.0.0
 local modem = peripheral.find("modem") or error("No modem found", 0)
 
 while true do
