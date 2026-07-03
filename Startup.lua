@@ -1,5 +1,5 @@
 --Credit to mikeywhiston for the original code (slightly modified for my use)
-local function compare_version_strings(v1, v2)
+local function compare_version_strings(v1, v2) --v1 is old, v2 is github version
   local split1, split2 = {}, {}
   for v in v1:gmatch('([0-9]+)%.?') do
     split1[#split1 + 1] = tonumber(v)
@@ -45,7 +45,7 @@ local function get_current_version()
 end
 
 local function fetch_current_version()
-    local url = "https://api.github.com/repos/PhantomWyvern/CCTweaked/contents/filename.lua" --change filename to correct pc filepath
+    local url = "https://raw.githubusercontent.com/repos/PhantomWyvern/CCTweaked/contents/clockComputer.lua" --change filename to correct pc filepath
     local resp, err = http.get(url)
     if fs.exists('temp2.lua') then -- changed from temp.lua
         fs.delete('temp2.lua') -- changed from temp.lua
@@ -74,6 +74,7 @@ local function replace_current_file()
     os.reboot()
 end
 
+shell.openTab("temp.lua")
 while true do
     local success, err = pcall(function()
         --response, err = http.post(server_addr .. '/push_activation', textutils.serializeJSON(resp), {["Content-Type"] = "application/json"}) --dont think so?
@@ -93,7 +94,6 @@ while true do
         replace_current_file()
     else
         print('UP TO DATE')
-        shell.run("temp2.lua")
     end
     os.sleep(5)
 end
