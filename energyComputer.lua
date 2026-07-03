@@ -17,30 +17,56 @@ local function formatEnergy(energy)
     return formatted .. suffixes[suffixIndex] .. "FE"
 end
 
-while true do
-    local energyC = cube.getEnergy()
-    os.sleep(1)
-    local energyCA = cube.getEnergy()
-    rate = energyCA - energyC
+local function EnergyAmmount(energyC, energyM)
+    energyCF = formatEnergy(energyC)
+    energyMF = formatEnergy(energyM)
+    return energyCF .. "/" .. energyMF
+end
+
+local function EnergyPerSecond(energyC, energyCA)
+    local rate = energyCA - energyC
     if rate <= 0 then
         rate = math.abs(rate)
-        rateF = formatEnergy(rate)
-        sign = " -"
+        return " (-" .. formatEnergy(rate) .. "/s)"
     else
-        rateF = formatEnergy(rate)
-        sign = " +"
+        return " (+" .. formatEnergy(rate) .. "/s)"
     end
-    energyCF = formatEnergy(energyC)
-    local energyM = cube.getMaxEnergy()
-    energyMF = formatEnergy(energyM)
-    energy = energyCF .. "/" .. energyMF .. sign .. "(" .. rateF .. "/s)"
+end
+
+local function TimeLeft(energyC, energyCA, energyM)
+    local rate = energyCA - energyC
+    if rate == 0 then
+        return " (INF)"
+    else
+        rate = string.format("%H,%M,%S", rate)
+        if rate < 0 then
+            local timeLeft = math.abs(energyC / rate)
+            return " (" .. timeLeft .. " left)"
+        else
+            local timeLeft = math.abs((energyM - energyC) / rate)
+            return " (" .. timeLeft .. " left)"
+        end
+    end
+end
+
+while true do
+    energyC = cube.getEnergy()
+    os.sleep(1)
+    energyCA = cube.getEnergy()
+    energyM = cube.getMaxEnergy()
+
+    EnergyPerSecond = EnergyPerSecond(energyC, energyCA)
+    EnergyAmmount = EnergyAmmount(energyC, energyM)
+    TimeLeft = TimeLeft(energtyC, energyCA, energyM)
+
+    energy = (EnergyPerSecond "     " .. EnergyAmmount .. "     " .. TimeLeft)
     modem.transmit(54, 14, energy)
     print("transmitted: " .. energy)
     
     percentage = ((energyC / energyM) * 100)
     fpercentage = string.format("%.4f", percentage)
     percent = (fpercentage .. "% full")
-    --modem.transmit(52, 14, percent) --keeping incase not worked
+    --modem.transmit(52, 14, percent) --keeping incase test fail
     --print("transmitted: " .. percent)
     modem.transmit(51, 14, fpercentage)
     print("transmitted: " .. fpercentage)

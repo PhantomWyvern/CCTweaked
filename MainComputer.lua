@@ -1,4 +1,4 @@
--- 1.0.1 - 2026-06-03 Y-M-D
+-- 1.0.3 - 2026-06-03 Y-M-D
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
@@ -6,7 +6,7 @@ monitor.setTextScale(2)
 
 --todo list
 --storage reader and display
---energy per second display
+--dt fuel display switching with energy display
 --energy remaining display (or time till fulll charge if positive)
 --play sound when player joins or leaves the server?
 
@@ -22,7 +22,7 @@ end
 monitor.clear()
 setup(17, 1, colors.red, colors.black, "DragonOS")
 setup(1, 2, colors.red, colors.bllack, "-------------------------------")
-setup(18,10, colors.green, colors.black, "Energy:")
+setup(18,10, colors.green, colors.black, "Energy:") -- dt fuel display change in future
 
 local function recieveMessage(channelnum)
     modem.open(channelnum)
@@ -30,8 +30,12 @@ local function recieveMessage(channelnum)
     local event, side, channel, replyChannel, message, distance 
     repeat
         event, side, channel, replyChannel, message, distance = os.pullEvent()
-        if event == "timer" then
-            message = "error" --this fucks with energy bar when error, need to fix
+        if event == "timer" and channelnum == 51 then
+            message = "0"
+            print("error, message not recieved, please check computer with ID: " .. channelnum)
+            return message
+        elseif event == "timer" and channelnum ~= 51 then
+            message = "error"
             print("error, message not recieved, please check computer with ID: " .. channelnum)
             return message
         end
@@ -64,16 +68,8 @@ local function energyBar() -- unknown if setup will work with this
     percent = percentage / 100
     filledLength = (width * percent)
     setup(1, height, colors.white, colors.white, string.rep(" ", filledlength))
-    --monitor.setCursorPos(1, height)
-    --monitor.setBackgroundColor(colors.white)
-    --monitor.clearLine()
-    --monitor.write(string.rep(" ", filledLength)
     setup(1, height, colors.white, colors.green, string.rep(" ", filledlength))
-    --monitor.setCursorPos(1, height)
-    --monitor.setBackgroundColor(colors.green)
-    --monitor.write(string.rep(" ", filledLength))
-    --monitor.setBackgroundColor(colors.black)
-    print("message recieved: " .. percentage)
+    --print("message recieved: " .. percentage) --debug text
 end
 
 while true do
