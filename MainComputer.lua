@@ -1,8 +1,8 @@
--- 1.0.5
+-- 1.0.6
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "V1.0.5"
+Version = "V1.0.6"
 monitor.setTextScale(2)
 monitor.setBackgroundColor(colors.black)
 monitor.clear()
@@ -38,15 +38,17 @@ local function recieveMessage(channelnum)
     until event == "timer" or (event == "modem_message" and channel == channelnum)
 
     if event == "modem_message" then
+        print("message recieved from ID: ".. channelnum .. " " .. message) --debug text
         return message
     else
         message = "error"
-        print("error, message not recieved, please check computer with ID: " .. channelnum)
+        print("error, message not recieved, please check sender modem ID: " .. channelnum)
         return message
     end
 
     modem.close(channelnum)
     os.cancelTimer(timerID)
+    print("Timer stopped, and modem closed on channel: " .. channelnum) --debug text
 end
 
 local function Time() 
@@ -62,29 +64,32 @@ local function Energy()
 end
 
 local function Percent() 
-    local percentage = recieveMessage(53)
-    setup(15, 12, colors.green, colors.black, percentage)
-    --print("message recieved: " .. percentage) --debug text
+    local recieved_percentage = recieveMessage(53)
+    setup(15, 12, colors.green, colors.black, recieved_percentage)
+    --print("message recieved: " .. recieved_percentage) --debug text
 end
 
 local function energyBar() -- unknown if setup will work with this
-    local percentage = tonumber(recieveMessage(52))
-    percent = percentage / 100
+    local recieved_percentage = tonumber(recieveMessage(52))
+    percent = recieved_percentage / 100
     filledLength = (width * percent)
     monitor.setCursorPos(1, height)
-    monitor.setBackgroundColor(colors.gray)
+    monitor.setBackgroundColor(colors.white)
     monitor.write(string.rep(" ", width))
 
     monitor.setCursorPos(1, height)
     monitor.setBackgroundColor(colors.green)
     monitor.write(string.rep(" ", filledLength))
-    --print("message recieved: " .. percentage) --debug text
+    --print("message recieved: " .. recieved_percentage) --debug text
 end
 
 while true do
     Time()
+    os.sleep(1)
     Energy()
+    os.sleep(1)
     Percent()
+    os.sleep(1)
     energyBar()
     os.sleep(1)
 end

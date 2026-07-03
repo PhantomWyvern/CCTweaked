@@ -7,6 +7,6 @@ while true do
     correctedTime = utcTime + X
     formattedDate = os.date("%a %d %b %Y                  %I:%M %p", correctedTime)
     modem.transmit(55, 14, formattedDate)
-    print("transmitted: " .. formattedDate)
+    print("transmitted ID 55:" .. formattedDate)
     os.sleep(1)
 end
