@@ -31,7 +31,7 @@ setup(18,10, colors.green, colors.black, "Energy:") -- dt fuel display change in
 
 local function recieveMessage(channelnum)
     modem.open(channelnum)
-    local timerID = os.startTimer(5)
+    local timerID = os.startTimer(10)
     local event, side, channel, replyChannel, message, distance 
     repeat
         event, side, channel, replyChannel, message, distance = os.pullEvent()
