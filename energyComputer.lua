@@ -19,16 +19,18 @@ end
 
 while true do
     local energyC = cube.getEnergy()
-    modem.transmit(54, 14, formatEnergy(energyC))
-    print("transmitted: " .. formatEnergy(energyC))
+    energyCF = formatEnergy(energyC)
     local energyM = cube.getMaxEnergy()
-    modem.transmit(53, 14, formatEnergy(energyM))
-    print("transmitted: " .. formatEnergy(energyM))
+    energyMF = formatEnergy(energyM)
+    energy = energyCF .. "/" .. energyMF
+    modem.transmit(54, 14, energy)
+    print("transmitted: " .. energy)
+    
     percentage = ((energyC / energyM) * 100)
     fpercentage = string.format("%.4f", percentage)
     percent = (fpercentage .. "% full")
-    modem.transmit(52, 14, percent)
-    print("transmitted: " .. percent)
+    --modem.transmit(52, 14, percent) --keeping incase not worked
+    --print("transmitted: " .. percent)
     modem.transmit(51, 14, fpercentage)
     print("transmitted: " .. fpercentage)
     os.sleep(1)
