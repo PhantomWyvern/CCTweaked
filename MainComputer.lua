@@ -2,6 +2,7 @@
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
+Version = "1.0.0"
 monitor.setTextScale(2)
 
 --todo list
@@ -21,7 +22,7 @@ end
 
 -- Static text setup
 monitor.clear()
-setup(17, 1, colors.red, colors.black, "DragonOS")
+setup(17, 1, colors.red, colors.black, "DragonOS    " .. Version)
 setup(1, 2, colors.red, colors.bllack, "-------------------------------")
 setup(18,10, colors.green, colors.black, "Energy:") -- dt fuel display change in future
 
