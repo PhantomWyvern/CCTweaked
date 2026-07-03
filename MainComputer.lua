@@ -62,7 +62,7 @@ local function Energy()
 end
 
 local function Percent() 
-    local percentage = (recieveMessage(53) .. "% fulll")
+    local percentage = recieveMessage(53)
     setup(15, 12, colors.green, colors.black, percentage)
     --print("message recieved: " .. percentage) --debug text
 end
