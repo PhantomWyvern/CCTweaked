@@ -1,4 +1,4 @@
--- 1.0.5
+-- 1.1.0
 local modem = peripheral.find("modem") or error("No modem found", 0)
 os.sleep(1)
 local cube = peripheral.wrap("bottom") or error("No cube found", 0)

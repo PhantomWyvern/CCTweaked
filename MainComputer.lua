@@ -1,8 +1,8 @@
--- 1.0.11
+-- 1.1.0
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "V1.0.11"
+Version = "V1.1.0"
 monitor.setTextScale(2)
 monitor.setBackgroundColor(colors.black)
 monitor.clear()
@@ -63,7 +63,7 @@ local function recieveMessage(channelnum)
         debugLog(0, log)
         return message
     else
-        message = "error"
+        message = nil
         log = ("message not recieved from ID: " .. channelnum)
         debugLog(101, log)
         modem.close(channelnum)
