@@ -1,8 +1,8 @@
--- 1.0.9
+-- 1.0.10
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "V1.0.9"
+Version = "V1.0.10"
 monitor.setTextScale(2)
 monitor.setBackgroundColor(colors.black)
 monitor.clear()
@@ -17,7 +17,7 @@ local function debugLog(error, message)
     -- error code meaning
     -- 0 = no error, just Log
     -- 101 = no message recieved
-    local file = fs.open("filename.txt", "w") --empties the file
+    local file = fs.open("debugLog.txt", "w") --empties the file
     file.close()
     local file = fs.open("debugLog.txt", "a")
     file.writeLine(error .. ": " .. message)
@@ -47,7 +47,7 @@ setup(18,10, colors.green, colors.black, "Energy:") -- dt fuel display change in
 local function recieveMessage(channelnum)
     modem.open(channelnum)
     timerID = os.startTimer(10) --might remove in next version
-    log = ("timer started and channel open: ".. channelnum) -- debug text
+    log = ("+ Timer started and channel open: ".. channelnum) -- debug text
     debugLog(0 , log)
     local event, side, channel, replyChannel, message, distance 
     repeat
@@ -59,7 +59,7 @@ local function recieveMessage(channelnum)
         debugLog(0, log)
         modem.close(channelnum)
         os.cancelTimer(timerID)
-        log = ("Timer stopped, modem closed: " .. channelnum) --debug text
+        log = ("- Timer stopped, modem closed: " .. channelnum) --debug text
         debugLog(0, log)
         return message
     else
@@ -68,7 +68,7 @@ local function recieveMessage(channelnum)
         debugLog(101, log)
         modem.close(channelnum)
         os.cancelTimer(timerID)
-        log = ("Timer stopped, modem closed: " .. channelnum) --debug text
+        log = ("- Timer stopped, modem closed: " .. channelnum) --debug text
         debugLog(0, log)
         return message
     end
@@ -76,27 +76,39 @@ end
 
 local function Time() 
     time = recieveMessage(55)
-    setup(1, 3, colors.green, colors.black, time)
+    if recieved_percentage == nil then
+        end
+    end
+    else
+        setup(1, 3, colors.green, colors.black, time)
 end
 
 local function Energy()
     energy = recieveMessage(54)
-    setup(1, 11, colors.green, colors.black, energy)
+    if recieved_percentage == nil then
+        end
+    end
+    else
+        setup(1, 11, colors.green, colors.black, energy)
 end
 
 local function energyBar() -- unknown if setup will work with this
     local recieved_percentage = recieveMessage(53)
-    percentage = recieved_percentage .. "% full"
-    setup(15, 12, colors.green, colors.black, percentage)
-    percent = recieved_percentage / 100
-    filledLength = (width * percent)
-    monitor.setCursorPos(1, height)
-    monitor.setBackgroundColor(colors.white)
-    monitor.write(string.rep(" ", width))
+    if recieved_percentage == nil then
+        end
+    end
+    else
+        percentage = recieved_percentage .. "% full"
+        setup(15, 12, colors.green, colors.black, percentage)
+        percent = recieved_percentage / 100
+        filledLength = (width * percent)
+        monitor.setCursorPos(1, height)
+        monitor.setBackgroundColor(colors.white)
+        monitor.write(string.rep(" ", width))
 
-    monitor.setCursorPos(1, height)
-    monitor.setBackgroundColor(colors.green)
-    monitor.write(string.rep(" ", filledLength))
+        monitor.setCursorPos(1, height)
+        monitor.setBackgroundColor(colors.green)
+        monitor.write(string.rep(" ", filledLength))
 end
 
 while true do
