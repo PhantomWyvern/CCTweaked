@@ -1,8 +1,8 @@
--- 1.0.7
+-- 1.0.8
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "V1.0.7"
+Version = "V1.0.8"
 monitor.setTextScale(2)
 monitor.setBackgroundColor(colors.black)
 monitor.clear()
@@ -27,11 +27,14 @@ end
 monitor.clear()
 setup(17, 1, colors.red, colors.black, "DragonOS         " .. Version)
 setup(1, 2, colors.red, colors.black, "-----------------------------------------")
+setup(1, 3, colors.white, colors.black, "Booting...")
+os.sleep(3)
+monitor.clearLine()
 setup(18,10, colors.green, colors.black, "Energy:") -- dt fuel display change in future
 
 local function recieveMessage(channelnum)
     modem.open(channelnum)
-    local timerID = os.startTimer(10)
+    timerID = os.startTimer(10)
     local event, side, channel, replyChannel, message, distance 
     repeat
         event, side, channel, replyChannel, message, distance = os.pullEvent()
@@ -41,14 +44,14 @@ local function recieveMessage(channelnum)
         print("message recieved from ID: ".. channelnum .. " " .. message) --debug text
         modem.close(channelnum)
         os.cancelTimer(timerID)
-        print("Timer stopped, and modem closed on channel: " .. channelnum) --debug text
+        print("Timer stopped, modem closed: " .. channelnum) --debug text
         return message
     else
         message = "error"
         print("error, message not recieved, please check sender modem ID: " .. channelnum)
         modem.close(channelnum)
         os.cancelTimer(timerID)
-        print("Timer stopped, and modem closed on channel: " .. channelnum) --debug text
+        print("Timer Activated, modem closed: " .. channelnum) --debug text
         return message
     end
 end
@@ -65,14 +68,10 @@ local function Energy()
     --print("message recieved: " .. energy) --debug text
 end
 
-local function Percent() 
-    local recieved_percentage = recieveMessage(53)
-    setup(15, 12, colors.green, colors.black, recieved_percentage)
-    --print("message recieved: " .. recieved_percentage) --debug text
-end
-
 local function energyBar() -- unknown if setup will work with this
-    local recieved_percentage = tonumber(recieveMessage(52))
+    local recieved_percentage = recieveMessage(53)
+    percentage = recieved_percentage .. "% full"
+    setup(15, 12, colors.green, colors.black, percentage)
     percent = recieved_percentage / 100
     filledLength = (width * percent)
     monitor.setCursorPos(1, height)
@@ -89,8 +88,6 @@ while true do
     Time()
     os.sleep(1)
     Energy()
-    os.sleep(1)
-    Percent()
     os.sleep(1)
     energyBar()
     os.sleep(1)

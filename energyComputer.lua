@@ -1,7 +1,8 @@
--- 1.0.4
+-- 1.0.5
 local modem = peripheral.find("modem") or error("No modem found", 0)
 os.sleep(1)
 local cube = peripheral.wrap("bottom") or error("No cube found", 0)
+energyM = cube.getMaxEnergy()
 
 local function formatEnergy(energy)
     local suffixes = {"", "k", "M", "G", "T", "P"}
@@ -61,7 +62,6 @@ while true do
     energyC = cube.getEnergy()
     os.sleep(1)
     energyCA = cube.getEnergy()
-    energyM = cube.getMaxEnergy()
 
     EnergyPerSec = EnergyPerSecond(energyC, energyCA)
     EnergyQuantity = EnergyAmmount(energyC, energyM)
@@ -73,12 +73,9 @@ while true do
     
     percentage = ((energyC / energyM) * 100)
     fpercentage = string.format("%.4f", percentage)
-    percent = (fpercentage .. "% full")
+    fpercent = tonumber(fpercentage)
     os.sleep(1)
-    modem.transmit(53, 14, percent) --keeping incase test fail
-    print("transmitted ID: 53: " .. percent)
-    os.sleep(1)
-    modem.transmit(52, 14, fpercentage)
+    modem.transmit(53, 14, fpercent)
     print("transmitted ID 52: " .. fpercentage)
     os.sleep(1)
 end
