@@ -49,7 +49,7 @@ local function TimeLeft(energyC, energyCA, energyM)
             if timeLeft > 86400 then
                 --timeLeft = string.format("%d days, %H:%M:%S", timeLeft)
                 print("Time left: " .. timeLeft)
-                return " (>24h left)"
+                return " >24h left"
             else
                 timeLeft = os.date("%H:%M:%S", timeLeft)
                 return "(" .. timeLeft .. " left)"
