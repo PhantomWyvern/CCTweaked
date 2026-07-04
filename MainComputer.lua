@@ -1,8 +1,8 @@
--- 1.0.10
+-- 1.0.11
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "V1.0.10"
+Version = "V1.0.11"
 monitor.setTextScale(2)
 monitor.setBackgroundColor(colors.black)
 monitor.clear()
@@ -76,27 +76,26 @@ end
 
 local function Time() 
     time = recieveMessage(55)
-    if recieved_percentage == nil then
-        end
-    end
+    if time == nil then
+        print("nil")
     else
         setup(1, 3, colors.green, colors.black, time)
+    end
 end
 
 local function Energy()
     energy = recieveMessage(54)
-    if recieved_percentage == nil then
-        end
-    end
+    if energy == nil then
+        print("nil")
     else
         setup(1, 11, colors.green, colors.black, energy)
+    end
 end
 
 local function energyBar() -- unknown if setup will work with this
     local recieved_percentage = recieveMessage(53)
     if recieved_percentage == nil then
-        end
-    end
+        print("nil")
     else
         percentage = recieved_percentage .. "% full"
         setup(15, 12, colors.green, colors.black, percentage)
@@ -109,6 +108,7 @@ local function energyBar() -- unknown if setup will work with this
         monitor.setCursorPos(1, height)
         monitor.setBackgroundColor(colors.green)
         monitor.write(string.rep(" ", filledLength))
+    end
 end
 
 while true do
