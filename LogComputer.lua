@@ -3,7 +3,8 @@ local modem = peripheral.find("modem") or error("No modem found", 0)
 local monitor = peripheral.find("monitor") or error("no monitor found", 0)
 modem.open(101)
 monitor.setTextScale(0.5)
-width, height = monitor.getSize()
+monitor.clear()
+local width, height = monitor.getSize()
 line = 1
 
 file = fs.open("debugLog.txt", "w") --empties the file upon reboot
@@ -33,6 +34,7 @@ while true do -- waits for Central server to send an error message (untested due
         line = line + 1
     else
         line = 1
+        monitor.clear()
     os.sleep(1)
     end
 end

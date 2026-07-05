@@ -1,4 +1,4 @@
--- 1.1.3
+-- 1.1.4
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
@@ -52,13 +52,13 @@ local function RequestData(channelnum) -- instead of passive listening, it reque
     local event, side, channel, replyChannel, message, distance 
     repeat
         event, side, channel, replyChannel, message, distance = os.pullEvent()
-    until event == "timer" or (event == "modem_message" and replyChannel == 1) --must be from Center Server to prevent error's
+    until (event == "timer" and id == timerID) or (event == "modem_message" and replyChannel == 1) --must be from Center Server to prevent error's
     os.cancelTimer(timerID) -- stops timer no matter which condition is met, ready for next loop
     if event == "modem_message" then
-        print("message recieved ID: " .. replyChannel) --debug text
+        print("message recieved: " .. message) --debug text
         return message
     else
-        print("message not recieved ID: " .. channelnum) --debug text
+        print("message not recieved ID: 1") --debug text
         return --returns nothing to prevent errors (unknown)
     end
 end

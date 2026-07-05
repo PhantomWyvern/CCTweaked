@@ -1,4 +1,4 @@
--- 1.1.3
+-- 1.1.4
 local modem = peripheral.find("modem") or error("No modem found", 0)
 modem.open(1)
 
@@ -60,8 +60,13 @@ local RequestID = { --idk why this is here when the main computer states which m
 local function dataRequest(channelnum) --sends a request to the requested modem for its contents, returns and stores the data gathered
     channel = tonumber(channelnum)
     temp = recieveData(channelnum)
-    ID = RequestID[channel]
-    storeData(ID, temp)
+    if temp ~= nil then --if the request was successful, store it in data table
+        ID = RequestID[channel]
+        storeData(ID, temp)
+        return ID
+    else
+        print("Error: " .. channelnum .. " failed to send / recieve data")
+    end
 end
 
 function storeData(key, value) -- stores the data in table
@@ -93,8 +98,10 @@ while true do -- waits for Main computer to request a specific piece of data
         event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
     until replyChannel == 10 -- check if the channel is the main PC requesting data
     message = tonumber(message)
-    dataRequest(message) --sends a request to the pc it needs info from and stores it in table
-    info = getData(RequestID[message]) --retrieves the info from table
+    ID = dataRequest(message) --sends a request to the pc it needs info from and stores it in table
+    info = getData(ID) --retrieves the info from table
+    print(info)
     modem.transmit(10, 1, info) --sends it back to main computer
+    print("Transmitting data to Main Computer: " .. info)
     os.sleep(1)
 end
