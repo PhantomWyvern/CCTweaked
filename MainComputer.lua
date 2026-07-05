@@ -1,8 +1,9 @@
--- 1.1.0
+-- 1.1.1
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "V1.1.0"
+Version = "V1.1.1"
+modem.open(10)
 monitor.setTextScale(2)
 monitor.setBackgroundColor(colors.black)
 monitor.clear()
@@ -12,22 +13,9 @@ monitor.clear()
 --dt fuel display switching with energy display
 --play sound when player joins or leaves the server?
 --day or night from clock pc
-
-local function debugLog(error, message)
-    -- error code meaning
-    -- 0 = no error, just Log
-    -- 101 = no message recieved
-    local file = fs.open("debugLog.txt", "w") --empties the file
-    file.close()
-    local file = fs.open("debugLog.txt", "a")
-    file.writeLine(error .. ": " .. message)
-    print(error .. ": " .. message)
-    file.close()
-end
-
+--move %full to over the bar and split the energy section into 2 lines
 
 local function setup(xpos, ypos, textcolor, backgroundcolor, text)
-    
     monitor.setCursorPos(xpos, ypos)
     monitor.setBackgroundColor(backgroundcolor)
     monitor.clearLine()
@@ -44,71 +32,53 @@ os.sleep(3) -- allows for messages to start transmitting before the display is u
 monitor.clearLine()
 setup(18,10, colors.green, colors.black, "Energy:") -- dt fuel display change in future
 
-local function recieveMessage(channelnum)
-    modem.open(channelnum)
+local RequestID = {
+    1 = "MainServer", -- the only computer it transmits to
+    10 = "MainComputer", -- the pc itself
+    21 = "time", --clock PC
+    22 = "energy", --energy PC
+    23 = "percentage", --energy PC
+    100 = "LogComputer" --Logs PC
+}
+
+local function RequestData(channelnum) -- instead of passive listening, it requests it
     timerID = os.startTimer(10) --might remove in next version
-    log = ("+ Timer started and channel open: ".. channelnum) -- debug text
-    debugLog(0 , log)
+    modem.transmit(1, 10, channelnum)
     local event, side, channel, replyChannel, message, distance 
     repeat
         event, side, channel, replyChannel, message, distance = os.pullEvent()
-    until event == "timer" or (event == "modem_message" and channel == channelnum)
-
+    until event == "timer" or (event == "modem_message" and replyChannel == 1)
+    os.cancelTimer(timerID)
     if event == "modem_message" then
-        log = ("message recieved from ID: ".. channelnum) -- debug text
-        debugLog(0, log)
-        modem.close(channelnum)
-        os.cancelTimer(timerID)
-        log = ("- Timer stopped, modem closed: " .. channelnum) --debug text
-        debugLog(0, log)
         return message
     else
-        message = nil
-        log = ("message not recieved from ID: " .. channelnum)
-        debugLog(101, log)
-        modem.close(channelnum)
-        os.cancelTimer(timerID)
-        log = ("- Timer stopped, modem closed: " .. channelnum) --debug text
-        debugLog(0, log)
-        return message
+        break
     end
 end
 
 local function Time() 
-    time = recieveMessage(55)
-    if time == nil then
-        print("nil")
-    else
-        setup(1, 3, colors.green, colors.black, time)
-    end
+    time = RequestData(21)
+    setup(1, 3, colors.green, colors.black, time)
 end
 
-local function Energy()
-    energy = recieveMessage(54)
-    if energy == nil then
-        print("nil")
-    else
-        setup(1, 11, colors.green, colors.black, energy)
-    end
+local function Energy() -- make this all 3 lines instead of 1?
+    energy = RequestData(22)
+    setup(1, 11, colors.green, colors.black, energy)
 end
 
 local function energyBar() -- unknown if setup will work with this
-    local recieved_percentage = recieveMessage(53)
-    if recieved_percentage == nil then
-        print("nil")
-    else
-        percentage = recieved_percentage .. "% full"
-        setup(15, 12, colors.green, colors.black, percentage)
-        percent = recieved_percentage / 100
-        filledLength = (width * percent)
-        monitor.setCursorPos(1, height)
-        monitor.setBackgroundColor(colors.white)
-        monitor.write(string.rep(" ", width))
+    local recieved_percentage = RequestData(23)
+    percentage = recieved_percentage .. "% full"
+    setup(15, 12, colors.green, colors.black, percentage)
+    percent = recieved_percentage / 100
+    filledLength = (width * percent)
+    monitor.setCursorPos(1, height)
+    monitor.setBackgroundColor(colors.white)
+    monitor.write(string.rep(" ", width))
 
-        monitor.setCursorPos(1, height)
-        monitor.setBackgroundColor(colors.green)
-        monitor.write(string.rep(" ", filledLength))
-    end
+    monitor.setCursorPos(1, height)
+    monitor.setBackgroundColor(colors.green)
+    monitor.write(string.rep(" ", filledLength))
 end
 
 while true do

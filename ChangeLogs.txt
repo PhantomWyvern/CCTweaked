@@ -1,0 +1,8 @@
+Changelogs only from last version to this version
+V1.1.1 / 2026-07-05 YMD
+
++ Added a central server that manages transmissions and requests between main computer and data collectors
++ changed the system from constand transmission to a request system, where nothing gets transmitted untill the main PC requests it for an update
++ added a log computer to display logs on a monitor
++ only the main server handles logs now, if an error occours anywhere else i will need to add that feature in a future version
++ the server stores data it recieves incase next request fails, it will send the last data instead

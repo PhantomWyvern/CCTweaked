@@ -1,7 +1,8 @@
--- 1.1.0
+-- 1.1.1
 local modem = peripheral.find("modem") or error("No modem found", 0)
-os.sleep(1)
 local cube = peripheral.wrap("bottom") or error("No cube found", 0)
+modem.open(22)
+modem.open(23)
 energyM = cube.getMaxEnergy()
 
 local function formatEnergy(energy)
@@ -58,25 +59,37 @@ local function TimeLeft(energyC, energyCA, energyM)
     end
 end
 
-while true do
+local function Energy()
     energyC = cube.getEnergy()
     os.sleep(1)
     energyCA = cube.getEnergy()
-
     EnergyPerSec = EnergyPerSecond(energyC, energyCA)
     EnergyQuantity = EnergyAmmount(energyC, energyM)
     TimeRemaining = TimeLeft(energyC, energyCA, energyM)
 
     energy = (EnergyPerSec .. " " .. EnergyQuantity .. " " .. TimeRemaining)
-    modem.transmit(54, 14, energy)
-    print("transmitted ID 54: " .. energy)
-    
+    modem.transmit(1, 22, energy)
+    print("transmitted ID 22: " .. energy)
+end
+
+local function Percentage()
+    energyC = cube.getEnergy()
     percentage = ((energyC / energyM) * 100)
     fpercentage = string.format("%.4f", percentage)
     fpercent = tonumber(fpercentage)
-    os.sleep(1)
-    modem.transmit(53, 14, fpercent)
-    print("transmitted ID 52: " .. fpercentage)
-    os.sleep(1)
+    modem.transmit(1, 23, fpercent)
+    print("transmitted ID 23: " .. fpercentage)
+end
+
+while true do
+    local event, side, channel, replyChannel, message, distance 
+    repeat
+        event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+    until replyChannel = 1 -- checks if the channel is the Main Server
+    if channel == 22 then
+        Energy()
+    elseif channel == 23 then
+        Percentage()
+    end
 end
     
