@@ -58,7 +58,7 @@ local function RequestData(channelnum) -- instead of passive listening, it reque
         print("message recieved ID: " .. replyChannel) --debug text
         return message
     else
-        print("message not recieved ID: " .. replyChannel) --debug text
+        print("message not recieved ID: " .. channelnum) --debug text
         return --returns nothing to prevent errors (unknown)
     end
 end
