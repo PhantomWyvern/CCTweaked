@@ -1,5 +1,5 @@
 Changelogs only from last version to this version
-V1.1.1 / 2026-07-05 YMD
+V1.1.2 / 2026-07-05 YMD
 
 + Added a central server that manages transmissions and requests between main computer and data collectors
 + changed the system from constand transmission to a request system, where nothing gets transmitted untill the main PC requests it for an update

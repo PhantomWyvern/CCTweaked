@@ -1,8 +1,8 @@
--- 1.1.1
+-- 1.1.2
 local monitor = peripheral.find("monitor") or error("No monitor found", 0)
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local width, height = monitor.getSize()
-Version = "V1.1.1"
+Version = "V1.1.2"
 modem.open(10)
 monitor.setTextScale(2)
 monitor.setBackgroundColor(colors.black)
@@ -33,12 +33,12 @@ monitor.clearLine()
 setup(18,10, colors.green, colors.black, "Energy:") -- dt fuel display change in future
 
 local RequestID = {
-    1 = "MainServer", -- the only computer it transmits to
-    10 = "MainComputer", -- the pc itself
-    21 = "time", --clock PC
-    22 = "energy", --energy PC
-    23 = "percentage", --energy PC
-    100 = "LogComputer" --Logs PC
+    [1] = "MainServer", -- the only computer it transmits to
+    [10] = "MainComputer", -- the pc itself
+    [21] = "time", --clock PC
+    [22] = "energy", --energy PC
+    [23] = "percentage", --energy PC
+    [100] = "LogComputer" --Logs PC
 }
 
 local function RequestData(channelnum) -- instead of passive listening, it requests it
@@ -52,7 +52,7 @@ local function RequestData(channelnum) -- instead of passive listening, it reque
     if event == "modem_message" then
         return message
     else
-        break
+        return
     end
 end
 

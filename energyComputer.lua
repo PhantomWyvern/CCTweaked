@@ -1,4 +1,4 @@
--- 1.1.1
+-- 1.1.2
 local modem = peripheral.find("modem") or error("No modem found", 0)
 local cube = peripheral.wrap("bottom") or error("No cube found", 0)
 modem.open(22)
@@ -85,7 +85,7 @@ while true do
     local event, side, channel, replyChannel, message, distance 
     repeat
         event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
-    until replyChannel = 1 -- checks if the channel is the Main Server
+    until replyChannel == 1 -- checks if the channel is the Main Server
     if channel == 22 then
         Energy()
     elseif channel == 23 then
