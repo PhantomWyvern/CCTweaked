@@ -1,4 +1,4 @@
--- 1.1.4
+-- 1.1.5
 local modem = peripheral.find("modem") or error("No modem found", 0)
 modem.open(1)
 
@@ -31,13 +31,13 @@ local function recieveData(channelnum) --old function still works, not repurpose
         event, side, channel, replyChannel, message, distance = os.pullEvent()
     until event == "timer" or (event == "modem_message" and replyChannel == channelnum)
 
-    if event == "modem_message" then
-        debugLog(0, ("message recieved from ID: ".. channelnum)) -- debug text
+    if event == "modem_message" and replyChannel == channelnum then
+        debugLog(0, ("+ message: ".. channelnum)) -- debug text
         os.cancelTimer(timerID)
-        debugLog(0, ("- Timer stopped, ID: " .. channelnum)) --debug text
+        debugLog(0, ("- Timer:" .. channelnum)) --debug text
         return message
-    else
-        debugLog(101, ("Message not recieved, ID: ".. channelnum)) -- debug text
+    else -- the problem --
+        debugLog(101, ("- Message not: ".. channelnum)) -- debug text
         os.cancelTimer(timerID)
         end
     end
@@ -57,39 +57,26 @@ local RequestID = { --idk why this is here when the main computer states which m
     [100] = "LogComputer" --Logs PC
 }
 
-local function dataRequest(channelnum) --sends a request to the requested modem for its contents, returns and stores the data gathered
-    channel = tonumber(channelnum)
-    temp = recieveData(channelnum)
-    if temp ~= nil then --if the request was successful, store it in data table
-        ID = RequestID[channel]
-        storeData(ID, temp)
-        return ID
-    else
-        print("Error: " .. channelnum .. " failed to send / recieve data")
-    end
-end
-
 function storeData(key, value) -- stores the data in table
     data.key = value
+    print(data.key .. "now set to " .. value)
 end
 
 function getData(key) 
     return data.key 
 end
 
-local function Time() 
-    local time = recieveData(55) --request and recieve here
-    storeData("time", time) 
-end
-
-local function Energy()
-    local energy = recieveData(54)
-    storeData("energy", energy)
-end
-
-local function Percentage()
-    recieved_percentage = recieveData(53)
-    storeData("percentage", recieved_percentage)
+local function dataRequest(channelnum) --sends a request to the requested modem for its contents, returns and stores the data gathered
+    channel = tonumber(channelnum)
+    temp = recieveData(channelnum)
+    if temp ~= nil then --if the request was successful, store it in data table
+        ID = RequestID[channel]
+        --print("ID: " .. ID)
+        storeData(ID, temp)
+        return ID
+    else
+        print("Error: " .. channelnum .. " failed to send / recieve data")
+    end
 end
 
 while true do -- waits for Main computer to request a specific piece of data
@@ -98,8 +85,9 @@ while true do -- waits for Main computer to request a specific piece of data
         event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
     until replyChannel == 10 -- check if the channel is the main PC requesting data
     message = tonumber(message)
-    ID = dataRequest(message) --sends a request to the pc it needs info from and stores it in table
-    info = getData(ID) --retrieves the info from table
+    -- where the problems start --
+    ID = dataRequest(message) --sends a request to the pc it needs info from and stores it in table if error, fuck
+    info = getData(message) --retrieves the info from table
     print(info)
     modem.transmit(10, 1, info) --sends it back to main computer
     print("Transmitting data to Main Computer: " .. info)
