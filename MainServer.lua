@@ -1,4 +1,4 @@
--- 1.1.2
+-- 1.1.3
 local modem = peripheral.find("modem") or error("No modem found", 0)
 modem.open(1)
 
@@ -15,13 +15,14 @@ local function debugLog(problem_code, message)
     -- 0 = no error, just Log
     -- 101 = no message recieved
     local time = IRLTime()
-    local log = (time .. " " .. problem_code .. ": " .. message)
+    local log = (time .. " " .. problem_code .. ": " .. message) --make it easier to search the logs for debugging
     modem.transmit(100, 1, log)
-    --print("Transmitted debug log") --debug message
+    print("Transmitted log to ID: 100: " .. log) --debug message
 end
 
-local function recieveData(channelnum) -- instead of passive listening, it requests it
-    timerID = os.startTimer(10) --might remove in next version
+local function recieveData(channelnum) --old function still works, not repurposed yet, read the other documentation for how this works
+    print("requesting data from ID: " .. channelnum) --debug message
+    timerID = os.startTimer(10) 
     log = ("+ Timer started and channel open: ".. channelnum) -- debug text
     debugLog(0 , log)
     modem.transmit(channelnum, 1, "request")
@@ -41,18 +42,13 @@ local function recieveData(channelnum) -- instead of passive listening, it reque
         end
     end
 
-local data = {
+local data = { --stores data here incase last request failed to recieve, will still break if error on startup
     ["time"] = 0,
     ["energy"] = 0,
     ["percentage"] = 0
 }
 
-local function dataRequest(channelnum) --no workie
-    temp = recieveData(channelnum)
-    storeData(RequestID.channelnum, temp)
-end
-
-local RequestID = {
+local RequestID = { --idk why this is here when the main computer states which modem the server needs to request from (this only here for info)
     [1] = "MainServer", -- wont be used but for info
     [10] = "MainComputer", -- also wont be used but for info
     [21] = "time", --clock PC
@@ -61,16 +57,23 @@ local RequestID = {
     [100] = "LogComputer" --Logs PC
 }
 
-function storeData(key, value)
+local function dataRequest(channelnum) --sends a request to the requested modem for its contents, returns and stores the data gathered
+    channel = tonumber(channelnum)
+    temp = recieveData(channelnum)
+    ID = RequestID[channel]
+    storeData(ID, temp)
+end
+
+function storeData(key, value) -- stores the data in table
     data.key = value
 end
 
-function getData(key)
+function getData(key) 
     return data.key 
 end
 
 local function Time() 
-    --local time = recieveData(55) --request and recieve here
+    local time = recieveData(55) --request and recieve here
     storeData("time", time) 
 end
 
@@ -89,8 +92,9 @@ while true do -- waits for Main computer to request a specific piece of data
     repeat
         event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
     until replyChannel == 10 -- check if the channel is the main PC requesting data
-    dataRequest(message) --sends a request to the pc it needs info from
-    info = getData(RequestID[message]()) --retrieves the info
-    modem.transmit(10, 1, info)
+    message = tonumber(message)
+    dataRequest(message) --sends a request to the pc it needs info from and stores it in table
+    info = getData(RequestID[message]) --retrieves the info from table
+    modem.transmit(10, 1, info) --sends it back to main computer
     os.sleep(1)
 end

@@ -1,4 +1,4 @@
---Credit to mikeywhiston for the original code (slightly modified for my use)
+--Credit to mikeywhiston for the original code (slightly modified for my use, no i wont explain it)
 local function compare_version_strings(v1, v2) --v1 is old, v2 is github version
   local split1, split2 = {}, {}
   for v in v1:gmatch('([0-9]+)%.?') do
