@@ -1,3 +1,5 @@
+# ARCHIVED, No more updates :(
+
 Version Meaning: (e.g V1.2.3)
 V = version
 1.0.0 = Major release, everything should work
